@@ -24,7 +24,13 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   Ansible admin user: ${ANSIBLE_USER} \n \
   Ansible password: ${PASSWORD}\n\n" > /dev/stdout; \
   fi \
-  && (echo ${PASSWORD} ; echo ${PASSWORD} ) | passwd ${ANSIBLE_USER}
+  && (echo ${PASSWORD} ; echo ${PASSWORD} ) | passwd ${ANSIBLE_USER} \
+  && echo "Cmnd_Alias ANSIBLE = /usr/local/src/*, /usr/bin/ansible, \
+  /usr/bin/unlink, /usr/bin/ln, /usr/bin/passwd, /bin/mkdir, /bin/chown, \
+  /bin/touch" >> /etc/sudoers \
+  && echo "${USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
+  && chown ${USER}:${USER} /etc/ansible/* -R \
+  && chown ${USER}:${USER} /usr/local/src/* -R 
 
 
 RUN apt-get clean autoclean \
