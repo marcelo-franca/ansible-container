@@ -4,6 +4,7 @@ ARG VERSION
 
 LABEL maintainer="<marcelo.frneves@gmail.com>"
 LABEL name="Marcelo França"
+LABEL version="${VERSION}"
 ENV ANSIBLE_USER "ansible"
 ENV LOCAL_SCRIPTS="/usr/local/src"
 ENV PATH="$LOCAL_SCRIPTS/:$PATH"
@@ -43,10 +44,9 @@ RUN apt-get clean autoclean \
   && rm -rf /var/lib/{apt,cache,log}/ \
   && rm -rf /var/lib/apt/lists/*
 
+RUN export VERSION=$(ansible --version | head -n 1 | tr -d '[[:alpha:][ ]]') \
+  && echo -n $VERSION > /tmp/.ansible_version
 
-RUN export VERSION=$(ansible --version | head -n 1 | tr -d '[[:alpha:][ ]]')
-
-LABEL version="${VERSION}"
 
 VOLUME [ "/etc/ansible/playbooks" ]
 
