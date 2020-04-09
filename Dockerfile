@@ -6,12 +6,16 @@ LABEL maintainer="<marcelo.frneves@gmail.com>"
 LABEL name="Marcelo França"
 LABEL version="${VERSION}"
 ENV ANSIBLE_USER "ansible"
+ENV LOCAL_SCRIPTS="/usr/local/src"
+ENV PATH="$LOCAL_SCRIPTS/:$PATH"
 
 
 RUN apt-get update && apt-get upgrade -y \
   && apt-get install gnupg2 gnupg1 -y \
   && echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> \
   /etc/apt/sources.list
+
+COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
@@ -25,12 +29,14 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   Ansible password: ${PASSWORD}\n\n" > /dev/stdout; \
   fi \
   && (echo ${PASSWORD} ; echo ${PASSWORD} ) | passwd ${ANSIBLE_USER} \
-  && echo "Cmnd_Alias ANSIBLE = /usr/local/src/*, /usr/bin/ansible, \
-  /usr/bin/unlink, /usr/bin/ln, /usr/bin/passwd, /bin/mkdir, /bin/chown, \
-  /bin/touch" >> /etc/sudoers \
-  && echo "${USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
-  && chown ${USER}:${USER} /etc/ansible/* -R \
-  && chown ${USER}:${USER} /usr/local/src/* -R 
+  && echo "Cmnd_Alias ANSIBLE = ${LOCAL_SCRIPTS}/*, /usr/bin/ansible,\
+  /usr/bin/unlink, /usr/bin/ln, /bin/mkdir, /bin/chown,\
+  /bin/touch, /bin/sed" >> /etc/sudoers \
+  && chmod 700 ${LOCAL_SCRIPTS}/*.sh \
+  && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
+  && mkdir /etc/ansible/playbooks \
+  && chown ${ANSIBLE_USER}:${ANSIBLE_USER} /etc/ansible -R \
+  && chown ${ANSIBLE_USER}:${ANSIBLE_USER} ${LOCAL_SCRIPTS}/* -R
 
 
 RUN apt-get clean autoclean \
@@ -38,5 +44,10 @@ RUN apt-get clean autoclean \
   && rm -rf /var/lib/{apt,cache,log}/ \
   && rm -rf /var/lib/apt/lists/*
 
+VOLUME [ "/etc/ansible/playbooks" ]
+
 WORKDIR /etc/ansible
-#USER ${ANSIBLE_USER}
+USER ${ANSIBLE_USER}
+
+ENTRYPOINT []
+CMD ["docker-entrypoint.sh" ]
