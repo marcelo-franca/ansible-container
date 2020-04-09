@@ -4,7 +4,6 @@ ARG VERSION
 
 LABEL maintainer="<marcelo.frneves@gmail.com>"
 LABEL name="Marcelo França"
-LABEL version="${VERSION}"
 ENV ANSIBLE_USER "ansible"
 ENV LOCAL_SCRIPTS="/usr/local/src"
 ENV PATH="$LOCAL_SCRIPTS/:$PATH"
@@ -19,7 +18,7 @@ COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
-  && apt-get install ansible --no-install-recommends --no-install-suggests -y
+  && apt-get install ansible python-apt --no-install-recommends --no-install-suggests -y
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
@@ -43,6 +42,11 @@ RUN apt-get clean autoclean \
   && apt-get autoremove \
   && rm -rf /var/lib/{apt,cache,log}/ \
   && rm -rf /var/lib/apt/lists/*
+
+
+RUN export VERSION=$(ansible --version | head -n 1 | tr -d '[[:alpha:][ ]]')
+
+LABEL version="${VERSION}"
 
 VOLUME [ "/etc/ansible/playbooks" ]
 
