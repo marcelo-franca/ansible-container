@@ -1,10 +1,8 @@
 FROM debian:buster-slim
 
-ARG VERSION
-
 LABEL maintainer="<marcelo.frneves@gmail.com>"
 LABEL name="Marcelo França"
-LABEL version="${VERSION}"
+LABEL app="ansible"
 ENV ANSIBLE_USER "ansible"
 ENV LOCAL_SCRIPTS="/usr/local/src"
 ENV PATH="$LOCAL_SCRIPTS/:$PATH"
