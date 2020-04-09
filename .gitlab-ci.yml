@@ -1,0 +1,23 @@
+docker-build-master:
+  image: docker:latest
+  stage: build
+  variables:
+    DOCKER_HOST: tcp://$DOCKER_HOST:2376
+    DOCKER_TLS_CERTDIR: "/certs"
+  services:
+    - docker:dind
+  tags:
+    - bsb-runner
+  before_script:
+    - docker login -u "$HUB_REGISTRY_USER" -p "$HUB_REGISTRY_PASSWORD"
+  script:
+    - docker build --no-cache -t "$HUB_REGISTRY_IMAGE" .
+    - export VERSION=$(docker run --rm -i "$HUB_REGISTRY_IMAGE" cat /tmp/.ansible_version)
+    - echo $VERSION
+    - docker push "$HUB_REGISTRY_IMAGE"
+    - docker tag "$HUB_REGISTRY_IMAGE" "$HUB_REGISTRY_IMAGE":"$VERSION"
+    - docker push "$HUB_REGISTRY_IMAGE":"$VERSION"
+    - docker rmi -f "$HUB_REGISTRY_IMAGE" "$HUB_REGISTRY_IMAGE":"$VERSION"
+    - docker logout
+  only:
+    - master
