@@ -49,7 +49,7 @@ RUN export VERSION=$(ansible --version | head -n 1 | tr -d '[[:alpha:][ ]]') \
 VOLUME [ "/etc/ansible/playbooks" ]
 
 WORKDIR /etc/ansible
-USER ${ANSIBLE_USER}
+#USER ${ANSIBLE_USER}
 
 ENTRYPOINT []
 CMD ["docker-entrypoint.sh" ]
