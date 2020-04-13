@@ -17,7 +17,7 @@ COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
-  && apt-get install ansible python-apt git vim --no-install-recommends --no-install-suggests -y
+  && apt-get install ansible python-apt git vim -y
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
@@ -31,7 +31,7 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   /usr/bin/unlink, /usr/bin/ln, /bin/mkdir, /bin/chown,\
   /bin/touch, /bin/sed" >> /etc/sudoers \
   && chmod 700 ${LOCAL_SCRIPTS}/*.sh \
-  && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
+  && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
   && mkdir /etc/ansible/playbooks \
   && chown ${ANSIBLE_USER}:${ANSIBLE_USER} /etc/ansible -R \
   && chown ${ANSIBLE_USER}:${ANSIBLE_USER} ${LOCAL_SCRIPTS}/* -R
