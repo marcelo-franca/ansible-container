@@ -31,11 +31,15 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   /usr/bin/unlink, /usr/bin/ln, /bin/mkdir, /bin/chown,\
   /bin/touch, /bin/sed" >> /etc/sudoers \
   && chmod 700 ${LOCAL_SCRIPTS}/*.sh \
-  && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers \
+  && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
   && mkdir /etc/ansible/playbooks \
   && chown ${ANSIBLE_USER}:${ANSIBLE_USER} /etc/ansible -R \
   && chown ${ANSIBLE_USER}:${ANSIBLE_USER} ${LOCAL_SCRIPTS}/* -R
 
+## Configuring ansible.cfg
+RUN sed -i 's/^#host_key_checking\ =\ False/host_key_checking\ =\ False/g' \
+  /etc/ansible/ansible.cfg \
+  && touch /etc/ansible/.ansible_configured
 
 RUN apt-get clean autoclean \
   && apt-get autoremove \
