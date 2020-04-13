@@ -17,7 +17,7 @@ COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
-  && apt-get install ansible python-apt git --no-install-recommends --no-install-suggests -y
+  && apt-get install ansible python-apt git vim --no-install-recommends --no-install-suggests -y
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
@@ -49,7 +49,7 @@ RUN export VERSION=$(ansible --version | head -n 1 | tr -d '[[:alpha:][ ]]') \
 VOLUME [ "/etc/ansible/playbooks" ]
 
 WORKDIR /etc/ansible
-#USER ${ANSIBLE_USER}
+USER ${ANSIBLE_USER}
 
 ENTRYPOINT []
 CMD ["docker-entrypoint.sh" ]
