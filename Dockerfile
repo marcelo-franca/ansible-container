@@ -27,7 +27,7 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   Ansible password: ${PASSWORD}\n\n" > /dev/stdout; \
   fi \
   && (echo ${PASSWORD} ; echo ${PASSWORD} ) | passwd ${ANSIBLE_USER} \
-  && gpasswd -a ${ANSIBLE_USER} sudo
+  && gpasswd -a ${ANSIBLE_USER} sudo \
   && chmod 700 ${LOCAL_SCRIPTS}/*.sh \
   && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
   && mkdir /etc/ansible/playbooks \
