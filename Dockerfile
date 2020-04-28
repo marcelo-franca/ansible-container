@@ -17,7 +17,7 @@ COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
-  && apt-get install ansible python-apt git sudo python-pip -y
+  && apt-get install ansible python-apt git sudo python-pip python3 -y
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
