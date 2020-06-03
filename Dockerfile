@@ -19,7 +19,11 @@ COPY ./config/aws/awscliv2.zip /tmp/awscliv2.zip
 
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
   && apt-get update \
+<<<<<<< HEAD
   && apt-get install ansible python-apt python-pip git vim unzip -y
+=======
+  && apt-get install ansible python-apt git sudo python-pip python3 python3-pip  -y
+>>>>>>> 19eac132084176f6782b6f30f2cea1eb319da943
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
@@ -29,9 +33,13 @@ RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   Ansible password: ${PASSWORD}\n\n" > /dev/stdout; \
   fi \
   && (echo ${PASSWORD} ; echo ${PASSWORD} ) | passwd ${ANSIBLE_USER} \
+<<<<<<< HEAD
   && echo "Cmnd_Alias ANSIBLE = ${LOCAL_SCRIPTS}/*, /usr/bin/ansible,\
   /usr/bin/unlink, /usr/bin/ln, /bin/mkdir, /bin/chown,\
   /bin/touch, /bin/sed, /usr/local/bin/aws" >> /etc/sudoers \
+=======
+  && gpasswd -a ${ANSIBLE_USER} sudo \
+>>>>>>> 19eac132084176f6782b6f30f2cea1eb319da943
   && chmod 700 ${LOCAL_SCRIPTS}/*.sh \
   && echo "${ANSIBLE_USER} ALL=(ALL) NOPASSWD: ANSIBLE" >> /etc/sudoers \
   && mkdir /etc/ansible/playbooks \
