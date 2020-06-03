@@ -3,7 +3,7 @@ kind: pipeline
 name: default
 
 steps:
-- name: docker  
+- name: build-ansible  
   image: plugins/docker
   settings:
     username:
@@ -12,5 +12,5 @@ steps:
       from_secret: docker_password
     repo:
       from_secret: docker_repo
-    tags: dev-${DRONE_BUILD_NUMBER}
+    auto_tag: true
     dockerfile: ./Dockerfile
