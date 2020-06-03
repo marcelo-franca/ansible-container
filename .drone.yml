@@ -12,5 +12,5 @@ steps:
       from_secret: docker_password
     repo:
       from_secret: docker_repo
-    auto_tag: true
+    tags: $DRONE_BUILD_NUMBER
     dockerfile: ./Dockerfile
