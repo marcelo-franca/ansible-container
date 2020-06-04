@@ -14,7 +14,7 @@ steps:
     image: docker:latest
     commands:
       - docker login -u "$HUB_REGISTRY_USER" -p "$HUB_REGISTRY_PASSWORD"
-      - docker build --no-cache -t "$HUB_REGISTRY_IMAGE" /drone/src/Dockerfile
+      - docker build --no-cache -t "$HUB_REGISTRY_IMAGE" /drone/src/
       - export VERSION=$(docker run --rm -i "$HUB_REGISTRY_IMAGE" cat /tmp/.ansible_version).${DRONE_BUILD_NUMBER}
       - docker push "$HUB_REGISTRY_IMAGE"
       - docker tag "$HUB_REGISTRY_IMAGE" "$HUB_REGISTRY_IMAGE":"$VERSION"
