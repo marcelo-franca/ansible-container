@@ -1,0 +1,33 @@
+---
+kind: pipeline
+name: ansible
+
+workspace:
+  path: /drone/src
+
+platform:
+  os: linux
+  arch: amd64
+
+steps:
+  - name: build-ansible
+    image: docker:latest
+    commands:
+      - docker login -u "$HUB_REGISTRY_USER" -p "$HUB_REGISTRY_PASSWORD"
+      - docker build --no-cache -t "$HUB_REGISTRY_IMAGE" ./Dockerfile
+      - export VERSION=$(docker run --rm -i "$HUB_REGISTRY_IMAGE" cat /tmp/.ansible_version).${DRONE_BUILD_NUMBER}
+      - docker push "$HUB_REGISTRY_IMAGE"
+      - docker tag "$HUB_REGISTRY_IMAGE" "$HUB_REGISTRY_IMAGE":"$VERSION"
+      - docker push "$HUB_REGISTRY_IMAGE":"$VERSION"
+      - docker rmi -f "$HUB_REGISTRY_IMAGE" "$HUB_REGISTRY_IMAGE":"$VERSION"
+      - docker logout
+    environment:
+      HUB_REGISTRY_USER:
+        from_secret: docker_username
+      HUB_REGISTRY_PASSWORD:
+        from_secret: docker_password
+      HUB_REGISTRY_IMAGE:
+        from_secret: docker_repo
+    when:
+      branch:
+        - tests
