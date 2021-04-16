@@ -10,17 +10,18 @@ ENV PATH="$LOCAL_SCRIPTS/:$ANSIBLE_LOCAL_BIN/bin:$PATH"
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get upgrade -y \
-  && apt-get install gnupg2 gnupg1 -y \
-  && echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> \
-  /etc/apt/sources.list
+RUN apt-get update && apt-get upgrade -y
+  
+RUN apt-get install gnupg2 gnupg1 -y \
+    && echo "deb http://ppa.launchpad.net/ansible/ansible/ubuntu trusty main" >> /etc/apt/sources.list
+
+
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367
+RUN apt-get update \
+    && apt-get install ansible python-apt git sudo unzip python-pip python3 python3-pip  -y
 
 COPY ./docker-entrypoint.sh /usr/local/src/docker-entrypoint.sh
 COPY ./config/aws/awscliv2.zip /tmp/awscliv2.zip
-
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 93C4A3FD7BB9C367 \
-  && apt-get update \
-  && apt-get install ansible python-apt git sudo unzip python-pip python3 python3-pip  -y
 
 RUN useradd -M -d /etc/ansible ${ANSIBLE_USER} -s /bin/bash \
   && if [ -z "${PASSWORD}" ]; then \
