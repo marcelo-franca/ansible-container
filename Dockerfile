@@ -8,6 +8,7 @@ ENV LOCAL_SCRIPTS="/usr/local/src"
 ENV ANSIBLE_LOCAL_BIN="/etc/ansible/.local"
 ENV PATH="$LOCAL_SCRIPTS/:$ANSIBLE_LOCAL_BIN/bin:$PATH"
 
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get upgrade -y \
   && apt-get install gnupg2 gnupg1 -y \
